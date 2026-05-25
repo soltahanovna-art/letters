@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Архив писем М. Еликпаева</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  background:#b8aa88;
+  font-family:"Courier New", monospace;
+  color:#2b2418;
+}
+
+.leftPanel{
+  width:170px;
+  background:#2f2f2f;
+  color:white;
+  padding:18px;
+}
+
+.letterBtn{
+  padding:15px 10px;
+  margin-bottom:15px;
+  cursor:pointer;
+  text-align:center;
+  border:1px solid #777;
+  background:#3a3a3a;
+  border-radius:4px;
+  transition:.3s;
+}
+
+.letterBtn:hover,
+.letterBtn.active{
+  background:#5a0000;
+  transform:scale(1.03);
+}
+
+.main{
+  flex:1;
+  padding:25px;
+  overflow-y:auto;
+}
+
+.paper{
+  background:#f6eed7;
+  background-image:
+    linear-gradient(transparent 96%, rgba(0,0,0,.04) 100%);
+  min-height:90vh;
+  padding:55px;
+  line-height:1.9;
+  font-size:17px;
+  white-space:pre-wrap;
+  box-shadow:0 0 25px rgba(0,0,0,.45);
+  border:1px solid #9d8b63;
+  position:relative;
+  transform-origin:top center;
+}
+
+.paper:before{
+  content:"АРХИВ";
+  position:absolute;
+  top:35px;
+  right:45px;
+  color:#8b0000;
+  border:4px solid #8b0000;
+  padding:8px 18px;
+  font-size:34px;
+  transform:rotate(-17deg);
+  opacity:.25;
+  font-weight:bold;
+}
+
+.paper:after{
+  content:"СЕКРЕТНО";
+  position:absolute;
+  top:120px;
+  left:70px;
+  border:4px solid red;
+  padding:10px;
+  font-size:38px;
+  color:red;
+  opacity:.14;
+  transform:rotate(-25deg);
+}
+
+.paper.opening{
+  animation:openLetter .9s ease;
+}
+
+@keyframes openLetter{
+  0%{
+    opacity:0;
+    transform:rotateX(80deg) translateY(-100px) scale(.8);
+  }
+  40%{
+    opacity:1;
+    transform:rotateX(-10deg) translateY(10px) scale(1.02);
+  }
+  100%{
+    opacity:1;
+    transform:rotateX(0) translateY(0) scale(1);
+  }
+}
+
+.rightPanel{
+  width:470px;
+  background:#ddd0ad;
+  padding:18px;
+  overflow-y:auto;
+  border-left:3px solid #6b5b3e;
+}
+
+.controls{
+  display:flex;
+  gap:8px;
+  margin-bottom:15px;
+}
+
+button{
+  background:#3a2d1d;
+  color:white;
+  border:none;
+  padding:9px 12px;
+  cursor:pointer;
+  border-radius:4px;
+  font-family:"Courier New", monospace;
+}
+
+button:hover{
+  background:#6b0000;
+}
+
+.symptom{
+  background:#f6eed7;
+  margin-bottom:10px;
+  padding:12px;
+  border-left:8px solid #555;
+  box-shadow:0 0 5px rgba(0,0,0,.2);
+  animation:symptomAppear .45s both;
+}
+
+@keyframes symptomAppear{
+  from{
+    opacity:0;
+    transform:translateX(45px);
+  }
+  to{
+    opacity:1;
+    transform:translateX(0);
+  }
+}
+
+.symptom label{
+  cursor:pointer;
+}
+
+.symptom input{
+  transform:scale(1.2);
+  margin-right:8px;
+}
+
+.mark{
+  padding:3px 5px;
+  border-radius:4px;
+  font-weight:bold;
+  box-decoration-break:clone;
+  -webkit-box-decoration-break:clone;
+  animation:highlightEffect .8s;
+}
+
+@keyframes highlightEffect{
+  0%{
+    filter:brightness(2);
+  }
+  100%{
+    filter:brightness(1);
+  }
+}
+
+.color-reform{background:#ff6b6b99;border-bottom:3px solid #c0392b}
+.color-national{background:#ffe66d99;border-bottom:3px solid #d68910}
+.color-structure{background:#48dbfb99;border-bottom:3px solid #2471a3}
+.color-querulant{background:#1dd1a199;border-bottom:3px solid #117864}
+.color-persecution{background:#a29bfe99;border-bottom:3px solid #6c5ce7}
+.color-emotion{background:#ff9ff399;border-bottom:3px solid #c2185b}
+.color-dark{background:#b2bec399;border-bottom:3px solid #636e72}
+
+.analysisBox{
+  margin-top:20px;
+  background:#f6eed7;
+  border:2px solid #8b0000;
+  padding:15px;
+  box-shadow:0 0 8px rgba(0,0,0,.25);
+}
+
+.analysisBox.show{
+  animation:analysisWindow .5s ease;
+}
+
+@keyframes analysisWindow{
+  0%{
+    opacity:0;
+    transform:translateY(20px) scale(.9);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+.analysisTitle{
+  color:#8b0000;
+  font-weight:bold;
+  font-size:18px;
+  margin-bottom:10px;
+}
+
+.analysisSection{
+  margin-top:12px;
+  padding:10px;
+  background:rgba(255,255,255,.6);
+  border-left:5px solid #8b0000;
+}
+
+.small{
+  font-size:14px;
+  opacity:.85;
+}
+</style>
+</head>
+
+<body>
+
+<div class="leftPanel">
+  <div class="letterBtn active" onclick="openLetter(1,this)">📩<br>Письмо 1</div>
+  <div class="letterBtn" onclick="openLetter(2,this)">📩<br>Письмо 2</div>
+  <div class="letterBtn" onclick="openLetter(3,this)">📩<br>Письмо 3</div>
+</div>
+
+<div class="main">
+  <div class="paper" id="paper">
+    <h2 id="letterTitle"></h2>
+    <div id="letterText"></div>
+  </div>
+</div>
+
+<div class="rightPanel">
+  <h2>Психиатрический «симптом»</h2>
+
+  <div class="controls">
+    <button onclick="showAll()">Показать все</button>
+    <button onclick="clearAll()">Снять все</button>
+  </div>
+
+  <div id="symptomList"></div>
+
+  <div id="analysisBox" class="analysisBox">
+    <div class="analysisTitle">Анализ симптома</div>
+    <p>Выберите симптом справа.</p>
+  </div>
+</div>
+
+<script>
+let currentLetter = 1;
+
+const letters = {
+  1:{
+    title:"Письмо №1. М. Еликпаев — Н.С. Хрущеву, 23 октября 1957 г.",
+    file:"letter1.txt",
+    symptoms:[
+      {
+        id:"reform1",
+        title:"1. Бред реформаторства",
+        symptom:"Патологическая, неадекватная тяга к изменению государственного строя",
+        quotes:[
+          "В Конституцию СССР и союзной республики внести специальный пункт",
+          "Столицу РСФСР надо перевести в другой город, или – столицу СССР"
+        ],
+        color:"color-reform",
+        historian:"Это грамотные конституционные инициативы. Статус государственного языка был реализован в Казахстане в 1989 г. Идея разделения столиц РСФСР и СССР также обсуждалась политиками позже.",
+        psychiatrist:"Опровергнуто. Идеи носят системный, юридически выверенный характер. Автор предлагает реформы через легальные механизмы — Конституцию."
+      },
+      {
+        id:"national1",
+        title:"2. Националистический бред / Идеи ксенофобии",
+        symptom:"Иррациональная ненависть к другой нации",
+        quotes:[
+          "казахский национализм, как и весь азиатский, был всегда прогрессивнее европейского и русского шовинизма"
+        ],
+        color:"color-national",
+        historian:"Еликпаев развивает ленинскую идею различия национализма угнетающей и угнетенной нации.",
+        psychiatrist:"Опровергнуто. В тексте нет иррациональной ненависти, призывов к насилию или идей расового превосходства."
+      },
+      {
+        id:"structure1",
+        title:"3. Резонёрство / Схизис",
+        symptom:"Бесплодное мудрствование, отсутствие логической связи",
+        quotes:[
+          "I. Национальный вопрос",
+          "III Вопросы истории",
+          "IV Об избирательной системе",
+          "V О материальном положении"
+        ],
+        color:"color-structure",
+        historian:"Структура письма напоминает политический меморандум.",
+        psychiatrist:"Опровергнуто. Мышление целенаправленное и последовательное."
+      },
+      {
+        id:"querulant1",
+        title:"4. Кверулянтство",
+        symptom:"Бред сутяжничества",
+        quotes:[
+          "На руднике Ленинск рабочие не имеют жилья",
+          "Иные пенсионеры в течение целого года не могли получить свои пенсии",
+          "Медикаменты надо сделать бесплатными"
+        ],
+        color:"color-querulant",
+        historian:"Автор выступает в роли общественного защитника.",
+        psychiatrist:"Опровергнуто. Автор защищает шахтеров, стариков и рабочих, что говорит об эмпатии."
+      },
+      {
+        id:"persecution1",
+        title:"5. Идеи преследования / Антисоветская паранойя",
+        symptom:"Страх гонений и критика власти",
+        quotes:[
+          "Наши войска, находящиеся за границей надо вывести",
+          "Надеюсь, что я за свою откровенность не подвергнусь гонениям"
+        ],
+        color:"color-persecution",
+        historian:"Опасение гонений исторически оправдалось.",
+        psychiatrist:"Опровергнуто. Страх перед репрессиями был адекватной реакцией на советскую реальность."
+      },
+      {
+        id:"emotion1",
+        title:"6. Эмоциональное уплощение",
+        symptom:"Якобы отсутствие адекватной эмоциональной реакции",
+        quotes:[
+          "мы никак не склонны почитать память Ермака",
+          "Я предлагаю выдвигать несколько кандидатов на одно место"
+        ],
+        color:"color-emotion",
+        historian:"Письмо демонстрирует политическую культуру и интеллектуальную смелость.",
+        psychiatrist:"Опровергнуто. Текст эмоционально окрашен и метафоричен."
+      }
+    ]
+  },
+
+  2:{
+    title:"Письмо №2. М.Г. Еликпаев — Чердоякской партийной организации, 7 июня 1957 г.",
+    file:"letter2.txt",
+    symptoms:[
+      {
+        id:"logic2",
+        title:"1. Паралогичное мышление / Резонёрство",
+        symptom:"Склонность к пустым рассуждениям, нарушение логики",
+        quotes:[
+          "Почему Сталина при жизни хвалили, после смерти охаиваем",
+          "Это не воспитывает верность товариществу",
+          "коммунисты должны были считать"
+        ],
+        color:"color-structure",
+        historian:"Автор анализирует моральную ответственность партийного руководства.",
+        psychiatrist:"Опровергнуто. Мышление пациента отличается высоким уровнем критического анализа и философской логики."
+      },
+      {
+        id:"reform2",
+        title:"2. Бред реформаторства / Сверхценные идеи",
+        symptom:"Уверенность в необходимости изменения основ государства",
+        quotes:[
+          "в избирательные бюллетени внести бы несколько человек",
+          "государственным языком является казахский"
+        ],
+        color:"color-reform",
+        historian:"Предложения касаются реальных политико-правовых вопросов.",
+        psychiatrist:"Опровергнуто. Пациент предлагает здоровые демократические механизмы."
+      },
+      {
+        id:"dark2",
+        title:"3. Очернительство",
+        symptom:"Восприятие реальности в черных тонах",
+        quotes:[
+          "Фоминский держит в исправности только свой кабинет",
+          "человека вошедшего туда тошнит",
+          "Строилась пекарня",
+          "люди используют его вместо туалета"
+        ],
+        color:"color-dark",
+        historian:"Описываются бытовые и санитарные проблемы поселка.",
+        psychiatrist:"Опровергнуто. Это социальная сатира и журналистское расследование."
+      },
+      {
+        id:"national2",
+        title:"4. Националистический бред",
+        symptom:"Зацикленность на национальном вопросе",
+        quotes:[
+          "не приняли ни одного человека из казахов",
+          "в Курчумском районе есть сосланные немцы",
+          "не правильно из-за них ложится пятно на весь народ"
+        ],
+        color:"color-national",
+        historian:"Автор защищает права разных этнических групп.",
+        psychiatrist:"Опровергнуто. Он выступает как интернационалист и правозащитник."
+      },
+      {
+        id:"querulant2",
+        title:"5. Кверулянтство",
+        symptom:"Тяга к написанию жалоб",
+        quotes:[
+          "Все эти вышесказанные вопросы я поднимал во многих собраниях",
+          "силикозниками",
+          "пенсии"
+        ],
+        color:"color-querulant",
+        historian:"Письмо отражает большое количество социальных проблем.",
+        psychiatrist:"Опровергнуто. Автор пишет о чужой боли, а не о личных обидах."
+      },
+      {
+        id:"adaptation2",
+        title:"6. Социальная дезадаптация",
+        symptom:"Открытая критика руководства",
+        quotes:[
+          "Фоминский",
+          "дирекция смотрела враждебно",
+          "Хрущев"
+        ],
+        color:"color-persecution",
+        historian:"Критика была рискованной, но соответствовала формату партийного обращения.",
+        psychiatrist:"Опровергнуто. Это гражданская позиция и сохранность личности."
+      }
+    ]
+  },
+
+  3:{
+    title:"Письмо №3. М.Г. Еликпаев, 25 октября 1958 г.",
+    file:"letter3.txt",
+    symptoms:[
+      {
+        id:"reform3",
+        title:"1. Бред реформаторства и мегаломания",
+        symptom:"Уверенность в способности изменить устройство СССР",
+        quotes:[
+          "О становлении Казахстана суверенным государством",
+          "выход Казахстана из состава Советского Союза"
+        ],
+        color:"color-reform",
+        historian:"Требование выхода республики опиралось на формально закрепленное право союзных республик.",
+        psychiatrist:"Опровергнуто. Автор предлагает использовать легальный партийный механизм и норму Конституции."
+      },
+      {
+        id:"national3",
+        title:"2. Тяжелый националистический бред / Ксенофобия",
+        symptom:"Иррациональная ненависть к другой нации",
+        quotes:[
+          "Всё это благодаря мне",
+          "мы можем прожить и без русских",
+          "Казахскому ребенку пробивать себе дорогу в жизни гораздо сложнее, чем русскому"
+        ],
+        color:"color-national",
+        historian:"Автор описывает социальное неравенство и русификацию.",
+        psychiatrist:"Опровергнуто. Это социологический анализ, а не шовинизм."
+      },
+      {
+        id:"reality3",
+        title:"3. Нарушение тестирования реальности",
+        symptom:"Неспособность адекватно оценивать действительность",
+        quotes:[
+          "мы оказались на грани потери родного языка",
+          "за 41 год не вышло и 41 казахского фильма"
+        ],
+        color:"color-structure",
+        historian:"Утверждения связаны с реальной языковой и культурной политикой.",
+        psychiatrist:"Опровергнуто. Автор демонстрирует сохранность интеллекта и наблюдательности."
+      },
+      {
+        id:"adaptation3",
+        title:"4. Социальная дезадаптация",
+        symptom:"Самоопасное поведение",
+        quotes:[
+          "пожертвовали бы своей жизнью",
+          "Ваше имя навсегда сохранилось бы в памяти"
+        ],
+        color:"color-persecution",
+        historian:"Риторика самопожертвования характерна для политических текстов.",
+        psychiatrist:"Опровергнуто. Это осознанный выбор политического диссидента."
+      },
+      {
+        id:"logic3",
+        title:"5. Паралогичное мышление / Схизис",
+        symptom:"Переход от глобальных тем к бытовым",
+        quotes:[
+          "столовые же предназначены только для русского народа",
+          "казахских блюд в них совершенно нет",
+          "Казахской национальной одежды",
+          "седел",
+          "шапанов",
+          "пиал"
+        ],
+        color:"color-emotion",
+        historian:"Быт связан с национальной идентичностью.",
+        psychiatrist:"Опровергнуто. Это публицистическая структура аргументации."
+      }
+    ]
+  }
+};
+
+async function openLetter(num, btn){
+  currentLetter = num;
+
+  document.querySelectorAll(".letterBtn").forEach(b=>b.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+
+  document.getElementById("letterTitle").innerText = letters[num].title;
+
+  const paper = document.getElementById("paper");
+  paper.classList.remove("opening");
+  void paper.offsetWidth;
+  paper.classList.add("opening");
+
+  try{
+    const response = await fetch(letters[num].file);
+    let text = await response.text();
+    text = prepareText(text, letters[num].symptoms);
+    document.getElementById("letterText").innerHTML = text;
+  }
+  catch(e){
+    document.getElementById("letterText").innerHTML =
+      "Не найден файл " + letters[num].file + ". Создайте рядом с index.html файлы letter1.txt, letter2.txt, letter3.txt.";
+  }
+
+  renderSymptoms();
+  resetAnalysis();
+}
+
+function prepareText(text, symptoms){
+  let safe = escapeHtml(text);
+
+  symptoms.forEach(symptom=>{
+    symptom.quotes.forEach((quote, index)=>{
+      const escapedQuote = escapeHtml(quote).trim();
+      if(escapedQuote.length < 3) return;
+
+      const spanId = symptom.id + "_" + index;
+
+      safe = safe.replace(
+        escapedQuote,
+        `<span id="${spanId}" data-symptom="${symptom.id}">${escapedQuote}</span>`
+      );
+    });
+  });
+
+  return safe;
+}
+
+function renderSymptoms(){
+  const box = document.getElementById("symptomList");
+  box.innerHTML = "";
+
+  letters[currentLetter].symptoms.forEach(symptom=>{
+    const div = document.createElement("div");
+    div.className = "symptom";
+    div.style.borderLeftColor = getColor(symptom.color);
+
+    div.innerHTML = `
+      <label>
+        <input type="checkbox" onchange="toggleSymptom('${symptom.id}', this.checked)">
+        <b>${symptom.title}</b><br>
+        <span class="small">${symptom.symptom}</span>
+      </label>
+    `;
+    box.appendChild(div);
+  });
+}
+
+function toggleSymptom(id, checked){
+  const symptom = letters[currentLetter].symptoms.find(s=>s.id===id);
+  const spans = document.querySelectorAll(`[data-symptom="${id}"]`);
+
+  spans.forEach(span=>{
+    if(checked){
+      span.classList.add("mark");
+      span.classList.add(symptom.color);
+    }else{
+      span.classList.remove("mark");
+      span.classList.remove(symptom.color);
+    }
+  });
+
+  if(checked){
+    showAnalysis(symptom);
+    if(spans.length>0){
+      spans[0].scrollIntoView({behavior:"smooth", block:"center"});
+    }
+  }
+}
+
+function showAnalysis(symptom){
+  const box = document.getElementById("analysisBox");
+
+  box.innerHTML = `
+    <div class="analysisTitle">${symptom.title}</div>
+
+    <div class="analysisSection">
+      <b>Симптом:</b><br>
+      ${symptom.symptom}
+    </div>
+
+    <div class="analysisSection">
+      <b>Цитата / тезис:</b><br>
+      ${symptom.quotes.map(q=>"«"+q+"»").join("<br><br>")}
+    </div>
+
+    <div class="analysisSection">
+      <b>Оценка историка:</b><br>
+      ${symptom.historian}
+    </div>
+
+    <div class="analysisSection">
+      <b>Оценка психиатра:</b><br>
+      ${symptom.psychiatrist}
+    </div>
+  `;
+
+  box.classList.remove("show");
+  void box.offsetWidth;
+  box.classList.add("show");
+}
+
+function resetAnalysis(){
+  document.getElementById("analysisBox").innerHTML = `
+    <div class="analysisTitle">Анализ симптома</div>
+    <p>Выберите симптом справа.</p>
+  `;
+}
+
+function showAll(){
+  document.querySelectorAll('.symptom input').forEach(input=>{
+    input.checked = true;
+    input.dispatchEvent(new Event("change"));
+  });
+}
+
+function clearAll(){
+  document.querySelectorAll('.symptom input').forEach(input=>{
+    input.checked = false;
+    input.dispatchEvent(new Event("change"));
+  });
+  resetAnalysis();
+}
+
+function escapeHtml(text){
+  return text
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
+function getColor(colorClass){
+  const colors = {
+    "color-reform":"#ff6b6b",
+    "color-national":"#ffe66d",
+    "color-structure":"#48dbfb",
+    "color-querulant":"#1dd1a1",
+    "color-persecution":"#a29bfe",
+    "color-emotion":"#ff9ff3",
+    "color-dark":"#b2bec3"
+  };
+  return colors[colorClass] || "#555";
+}
+
+openLetter(1, document.querySelector(".letterBtn"));
+</script>
+
+</body>
+</html>
